@@ -1,17 +1,26 @@
-package com.example.gilasw.model;
+package com.example.gilasw.domain;
+
+import com.example.gilasw.domain.enums.CategoryType;
+import com.example.gilasw.domain.enums.NotificationType;
 
 import java.util.List;
+import java.util.UUID;
 
 public class User {
 
-    private Integer id;
+    private UUID id;
     private String name;
     private String email;
     private String phone;
-    private List<String> subscribed;
+    private List<CategoryType> subscribed;
     private List<NotificationType> channels;
 
-    public User(Integer id, String name, String email, String phone, List<String> subscribed, List<NotificationType> channels) {
+    public User(final UUID id,
+                final String name,
+                final String email,
+                final String phone,
+                final List<CategoryType> subscribed,
+                final List<NotificationType> channels) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -20,7 +29,7 @@ public class User {
         this.channels = channels;
     }
 
-    public Integer getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -36,7 +45,7 @@ public class User {
         return phone;
     }
 
-    public List<String> getSubscribed() {
+    public List<CategoryType> getSubscribed() {
         return subscribed;
     }
 

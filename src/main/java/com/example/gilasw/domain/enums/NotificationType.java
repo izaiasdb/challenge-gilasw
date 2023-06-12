@@ -1,4 +1,4 @@
-package com.example.gilasw.model;
+package com.example.gilasw.domain.enums;
 
 public enum NotificationType {
     SMS,
