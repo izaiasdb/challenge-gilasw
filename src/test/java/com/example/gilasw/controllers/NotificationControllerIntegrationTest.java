@@ -1,8 +1,8 @@
 package com.example.gilasw.controllers;
 
-import com.example.gilasw.helpers.NotificationRequest;
-import com.example.gilasw.model.Notification;
-import com.example.gilasw.repositories.NotificationRepository;
+import com.example.gilasw.domain.enums.CategoryType;
+import com.example.gilasw.domain.entities.Log;
+import com.example.gilasw.repositories.LogRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -32,11 +32,11 @@ public class NotificationControllerIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private NotificationRepository notificationRepository;
+    private LogRepository logRepository;
 
     @AfterEach
     public void tearDown() {
-        notificationRepository.deleteAll();
+        logRepository.deleteAll();
     }
 
     @Test
@@ -44,20 +44,17 @@ public class NotificationControllerIntegrationTest {
         String category = "Sports";
         String message = "New match tomorrow!";
 
-        NotificationRequest request = new NotificationRequest(category, message);
-        String requestBody = objectMapper.writeValueAsString(request);
-
         ResultActions resultActions = mockMvc.perform(post("/api/notifications/{category}", category)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody));
+                .content(message));
 
         resultActions.andExpect(status().isOk());
 
-        List<Notification> notifications = notificationRepository.findAll();
+        List<Log> notifications = logRepository.findAll();
 
-        assertEquals(1, notifications.size());
-        Notification notification = notifications.get(0);
-        assertEquals(category, notification.getCategory());
+        assertEquals(3, notifications.size());
+        Log notification = notifications.get(0);
+        assertEquals(CategoryType.valueOf(category), notification.getCategory());
         assertEquals(message, notification.getMessage());
     }
 
@@ -66,16 +63,13 @@ public class NotificationControllerIntegrationTest {
         String invalidCategory = "Invalid";
         String message = "New match tomorrow!";
 
-        NotificationRequest request = new NotificationRequest(invalidCategory, message);
-        String requestBody = objectMapper.writeValueAsString(request);
-
         ResultActions resultActions = mockMvc.perform(post("/api/notifications/{category}", invalidCategory)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody));
+                .content(message));
 
         resultActions.andExpect(status().isBadRequest());
 
-        List<Notification> notifications = notificationRepository.findAll();
+        List<Log> notifications = logRepository.findAll();
         assertEquals(0, notifications.size());
     }
 
@@ -84,16 +78,13 @@ public class NotificationControllerIntegrationTest {
         String category = "Sports";
         String emptyMessage = "";
 
-        NotificationRequest request = new NotificationRequest(category, emptyMessage);
-        String requestBody = objectMapper.writeValueAsString(request);
-
         ResultActions resultActions = mockMvc.perform(post("/api/notifications/{category}", category)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody));
+                .content(emptyMessage));
 
         resultActions.andExpect(status().isBadRequest());
 
-        List<Notification> notifications = notificationRepository.findAll();
+        List<Log> notifications = logRepository.findAll();
 
         assertEquals(0, notifications.size());
     }
